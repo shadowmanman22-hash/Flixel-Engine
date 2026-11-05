@@ -2270,6 +2270,20 @@ class PlayState extends MusicBeatSubState
     }
     #end
 
+    if (Preferences.middlescroll)
+    {
+      #if mobile
+      // The arrow touch scheme already centers and enlarges the player strumline.
+      if (Preferences.controlsScheme != FunkinHitboxControlSchemes.Arrows || ControlsHandler.hasExternalInputDevice)
+      #end
+      {
+        final left = playerStrumline.getByDirection(NoteDirection.LEFT);
+        final right = playerStrumline.getByDirection(NoteDirection.RIGHT);
+        playerStrumline.x += FlxG.width / 2 - (left.x + right.x + right.width) / 2;
+      }
+      opponentStrumline.visible = false;
+    }
+
     playerStrumline.fadeInArrows();
     opponentStrumline.fadeInArrows();
   }

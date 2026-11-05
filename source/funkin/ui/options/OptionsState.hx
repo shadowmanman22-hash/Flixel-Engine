@@ -174,9 +174,12 @@ class OptionsMenu extends Page<OptionsMenuPageName>
     if (ControlsHandler.hasExternalInputDevice)
     #end
     createItem('CONTROLS', function() codex.switchPage(Controls));
-    // createItem("CONTROL SCHEMES", function() {
-    //   FlxG.state.openSubState(new ControlsSchemeMenu());
-    // });
+    #if mobile
+    createItem('CONTROL SCHEMES', function()
+    {
+      FlxG.state.openSubState(new ControlsSchemeMenu());
+    });
+    #end
     #if FEATURE_LAG_ADJUSTMENT
     createItem('LAG ADJUSTMENT', function()
     {

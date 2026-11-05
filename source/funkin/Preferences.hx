@@ -111,6 +111,22 @@ class Preferences
     return value;
   }
 
+  /** Whether to center the player strumline and hide the opponent strumline. */
+  public static var middlescroll(get, set):Bool;
+
+  static function get_middlescroll():Bool
+  {
+    return Save?.instance?.options?.middlescroll ?? false;
+  }
+
+  static function set_middlescroll(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.middlescroll = value;
+    Save.system.flush();
+    return value;
+  }
+
   /**
    * If disabled, flashing lights in the main menu and other areas will be less intense.
    * @default `true`
