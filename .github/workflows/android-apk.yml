@@ -1,0 +1,65 @@
+name: Android APK
+
+on:
+  push:
+    branches:
+      - coderabbit/middlescroll-hitbox
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    name: Build Android debug APK
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout source and assets
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK components
+        run: |
+          sdkmanager --install 'build-tools;35.0.0' 'ndk;29.0.13113456' 'platforms;android-29' 'platforms;android-35'
+
+      - name: Set up Haxe
+        uses: funkincrew/ci-haxe@v3.2.7
+        with:
+          haxe-version: "4.3.7"
+
+      - name: Install Haxe dependencies
+        run: |
+          haxelib --global git haxelib https://github.com/FunkinCrew/haxelib.git funkin-patches --skip-dependencies
+          haxelib --global git hmm https://github.com/FunkinCrew/hmm.git funkin-patches
+          haxelib --never newrepo
+          haxelib --global run hmm install -q
+
+      - name: Configure Lime for Android
+        run: |
+          haxelib run lime config ANDROID_SDK "$ANDROID_HOME"
+          haxelib run lime config ANDROID_NDK_ROOT "$ANDROID_HOME/ndk/29.0.13113456"
+          haxelib run lime config JAVA_HOME "$JAVA_HOME"
+          haxelib run lime config ANDROID_SETUP true
+
+      - name: Build APK
+        run: haxelib run lime build android -debug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Flixel-Engine-android-debug
+          path: export/debug/android/bin/**/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
