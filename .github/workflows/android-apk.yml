@@ -49,12 +49,26 @@ jobs:
           haxelib --never newrepo
           haxelib --global run hmm install -q
 
+      - name: Install native build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ libx11-dev libxi-dev libxext-dev libxinerama-dev libxrandr-dev libgl-dev libgl1-mesa-dev libasound2-dev libpulse-dev
+
+      - name: Build Lime host tools
+        run: |
+          git -C .haxelib/lime/git submodule update --init --recursive
+          haxelib run lime rebuild hxcpp
+          haxelib run lime rebuild cpp -64
+
       - name: Configure Lime for Android
         run: |
           haxelib run lime config ANDROID_SDK "$ANDROID_HOME"
           haxelib run lime config ANDROID_NDK_ROOT "$ANDROID_HOME/ndk/29.0.13113456"
           haxelib run lime config JAVA_HOME "$JAVA_HOME"
           haxelib run lime config ANDROID_SETUP true
+
+      - name: Build Lime Android libraries
+        run: haxelib run lime rebuild android
 
       - name: Build APK
         run: haxelib run lime build android -debug
