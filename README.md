@@ -1,15 +1,11 @@
 <div align='center'><img src="docs/readme_images/FNF_logo.png" width="800">
 
-<h2>Friday Night Funkin' is a rhythm game. Built using HaxeFlixel for <a href="https://ldjam.com/events/ludum-dare/47">Ludum Dare 47.</a></h2>
+<h2>Flixel-Engine
 
 This game was made with love to Newgrounds and its community. Extra love to Tom Fulp.
 
 </div>
 
-- [Playable web demo on Newgrounds!](https://www.newgrounds.com/portal/view/770371)
-- [Demo download builds for Windows, Mac, and Linux from Itch.io!](https://ninja-muffin24.itch.io/funkin)
-- [Download Android builds from Google Play!](https://play.google.com/store/apps/details?id=me.funkin.fnf)
-- [Download iOS builds from the App Store!](https://apps.apple.com/app/id6740428530)
 
 <div align='center'>
 <table>
@@ -57,7 +53,7 @@ Full credits can be found in-game, or in the `credits.json` file which is locate
 - [IvanAlmighty](https://twitter.com/IvanA1mighty) - Misc UI Design
 
 ## Music
-- [Kawaisprite](https://twitter.com/kawaisprite) - Musician
+- [Shadow man(https://twitter.com/kawaisprite) - Musician
 - [BassetFilms](https://twitter.com/Bassetfilms) - Music for "Monster", Additional Character Design
 
 ## Special Thanks
