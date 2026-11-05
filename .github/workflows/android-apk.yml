@@ -47,7 +47,16 @@ jobs:
           haxelib --global git haxelib https://github.com/FunkinCrew/haxelib.git funkin-patches --skip-dependencies
           haxelib --global git hmm https://github.com/FunkinCrew/hmm.git funkin-patches
           haxelib --never newrepo
-          haxelib --global run hmm install -q
+          for attempt in 1 2 3; do
+            if haxelib --global run hmm install -q; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "Haxe dependency installation failed after three attempts." >&2
+              exit 1
+            fi
+            sleep 15
+          done
 
       - name: Install native build dependencies
         run: |
