@@ -14,6 +14,9 @@ jobs:
     name: Build Android debug APK
     runs-on: ubuntu-22.04
     timeout-minutes: 120
+    env:
+      GIT_TERMINAL_PROMPT: "0"
+      HXCPP_COMPILE_THREADS: "2"
     steps:
       - name: Checkout source and assets
         uses: actions/checkout@v4
@@ -61,13 +64,19 @@ jobs:
       - name: Install native build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y g++ libx11-dev libxi-dev libxext-dev libxinerama-dev libxrandr-dev libgl-dev libgl1-mesa-dev libasound2-dev libpulse-dev libwayland-dev libxkbcommon-dev libpipewire-0.3-dev
+          sudo apt-get install -y g++ libx11-dev libxi-dev libxext-dev libxinerama-dev libxrandr-dev libgl-dev libgl1-mesa-dev libasound2-dev libpulse-dev libwayland-dev libxkbcommon-dev libpipewire-0.3-dev libdbus-1-dev libudev-dev
 
-      - name: Build Lime host tools
-        run: |
-          git -C .haxelib/lime/git submodule update --init --recursive
-          haxelib run lime rebuild hxcpp
-          haxelib run lime rebuild cpp -64
+      - name: Update Lime native submodules
+        timeout-minutes: 15
+        run: git -C .haxelib/lime/git submodule update --init --recursive
+
+      - name: Build HXCPP tools
+        timeout-minutes: 10
+        run: haxelib run lime rebuild hxcpp
+
+      - name: Build Lime host libraries
+        timeout-minutes: 20
+        run: haxelib run lime rebuild cpp -64
 
       - name: Configure Lime for Android
         run: |
@@ -77,9 +86,11 @@ jobs:
           haxelib run lime config ANDROID_SETUP true
 
       - name: Build Lime Android libraries
+        timeout-minutes: 25
         run: haxelib run lime rebuild android
 
       - name: Build APK
+        timeout-minutes: 40
         run: haxelib run lime build android -debug
 
       - name: Upload debug APK
