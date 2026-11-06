@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   android:
     name: Build Android APK
@@ -92,6 +96,10 @@ jobs:
         timeout-minutes: 25
         run: haxelib run lime rebuild android
 
+      - name: Compress mobile textures
+        timeout-minutes: 40
+        run: haxelib run astc-compressor compress-from-json -json ./astc-compression-data.json
+
       - name: Build APK
         timeout-minutes: 40
         # Release code with Android's local debug signing (no signing secrets required).
@@ -99,7 +107,7 @@ jobs:
           haxelib run lime build android
           -DNO_FEATURE_DEBUG_FUNCTIONS -DNO_FEATURE_DEBUG_DISPLAY
           -DNO_FEATURE_DEBUG_MENU -DNO_FEATURE_RESULTS_DEBUG
-          -DNO_FEATURE_FUNKVIS -DNO_PRELOAD_ALL
+          -DNO_FEATURE_FUNKVIS
           -DNO_FEATURE_MOBILE_ADVERTISEMENTS -DNO_FEATURE_MOBILE_IAP
           -DNO_FEATURE_MOBILE_IAR -DNO_FEATURE_MOBILE_AGESIGNALS
 

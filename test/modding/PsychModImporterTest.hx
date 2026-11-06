@@ -61,11 +61,23 @@ class PsychModImporterTest
       song: song
     }));
     File.saveContent('$root/source/data/test/test-hard.json', '{invalid JSON');
+    var cameraMismatch = Json.parse(Json.stringify(song));
+    cameraMismatch.notes[1].mustHitSection = false;
+    File.saveContent('$root/source/data/test/test-easy.json', Json.stringify({
+      song: cameraMismatch
+    }));
     File.saveContent('$root/source/songs/test/Inst.ogg', 'test-instrumental');
     File.saveContent('$root/source/songs/test/Voices.ogg', 'test-vocals');
+    File.saveContent('$root/source/songs/test/Voices-Player.ogg', 'test-player');
+    File.saveContent('$root/source/songs/test/Voices-Opponent.ogg', 'test-opponent');
     check(PsychModImporter.importPack('$root/source', '$root/mods/psych-test') == 1, 'import pack');
     var metadata = Json.parse(File.getContent('$root/mods/psych-test/data/songs/psych-test-test/psych-test-test-metadata.json'));
-    check(metadata.playData.difficulties.length == 1, 'malformed difficulty isolated');
+    check(metadata.playData.difficulties.length == 1 && metadata.playData.difficulties[0] == 'normal',
+      'normal preferred, invalid or mismatched difficulties isolated'
+    );
+    check(File.getContent('$root/mods/psych-test/songs/psych-test-test/Voices-bf.ogg') == 'test-player', 'player voices mapped');
+    check(File.getContent('$root/mods/psych-test/songs/psych-test-test/Voices-dad.ogg') == 'test-opponent', 'opponent voices mapped');
+    check(FileSystem.exists('$root/mods/psych-test/data/levels/psych-test.json'), 'Freeplay level published');
     check(File.getContent('$root/mods/psych-test/songs/psych-test-test/Inst.ogg') == 'test-instrumental', 'audio copied unchanged');
     check(FileSystem.exists('$root/mods/psych-test/_polymod_meta.json'), 'published Polymod metadata');
     check(FileSystem.exists('$root/source/data/test/test.json'), 'source preserved');

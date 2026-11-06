@@ -83,8 +83,10 @@ class PsychModImporter
       var difficulties:Array<String> = [];
       var reference:Dynamic = null;
       var referenceTimeline:String = null;
+      var referenceCamera:String = null;
       var files = FileSystem.readDirectory(directory);
-      files.sort(Reflect.compare);
+      // Prefer normal as the canonical metadata/camera timeline when available.
+      files.sort((a, b) -> a == '$folder.json' ? -1 : (b == '$folder.json' ? 1 : Reflect.compare(a, b)));
       for (filename in files)
       {
         if (!StringTools.endsWith(filename, '.json')) continue;
@@ -97,7 +99,11 @@ class PsychModImporter
           var song:Dynamic = Json.parse(File.getContent('$directory/$filename')).song;
           var result = convertChart(song);
           var timeline = Json.stringify(result.timeChanges);
-          if (referenceTimeline != null && referenceTimeline != timeline) throw 'Different BPM timeline between difficulties';
+          var camera = Json.stringify(result.events);
+          if (
+            referenceTimeline != null
+            && (referenceTimeline != timeline || referenceCamera != camera)
+          ) throw 'Different BPM/camera timeline between difficulties';
           if (Reflect.hasField(notes, difficulty)) throw 'Duplicate difficulty: $difficulty';
           Reflect.setField(notes, difficulty, result.notes);
           Reflect.setField(speeds, difficulty, number(song.speed, 1));
@@ -106,6 +112,7 @@ class PsychModImporter
           {
             reference = song;
             referenceTimeline = timeline;
+            referenceCamera = camera;
           }
           if (result.hasEvents) reports.push('$folder/$filename: Psych events are not imported.');
         }

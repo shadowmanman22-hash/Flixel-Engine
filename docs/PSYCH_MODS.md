@@ -14,15 +14,15 @@ psych-mods/meu-mod/
 
 São suportados charts de quatro teclas no formato Psych com seções `mustHitSection`, sustains, velocidades por dificuldade, mudanças de BPM e `sectionBeats`. A importação aceita `Voices.ogg` ou vozes separadas `Voices-Player.ogg` e `Voices-Opponent.ogg`. Os timestamps continuam em milissegundos. A câmera acompanha a posse de cada seção.
 
-Esta é uma camada de compatibilidade de charts e áudio, não compatibilidade completa com mods Psych. Personagens e cenários personalizados, Lua/HScript, shaders e eventos Psych precisam de adaptação para V-Slice. As músicas importadas usam BF, Dad, GF e o cenário padrão. Charts com tipos de nota especiais, seções GF ou animações alternativas são rejeitados e registrados; dificuldades com timelines de BPM diferentes também precisam de adaptação. Eventos Psych não são executados. Consulte `psych-import-report.txt` dentro do mod gerado para os limites e arquivos rejeitados.
+Esta é uma camada de compatibilidade de charts e áudio, não compatibilidade completa com mods Psych. Personagens e cenários personalizados, Lua/HScript, shaders e eventos Psych precisam de adaptação para V-Slice. As músicas importadas usam BF, Dad, GF e o cenário padrão. Charts com tipos de nota especiais, seções GF ou animações alternativas são rejeitados e registrados; dificuldades com timelines de BPM ou câmera diferentes também precisam de adaptação. Eventos Psych não são executados. Consulte `psych-import-report.txt` dentro do mod gerado para os limites e arquivos rejeitados.
 
 O jogo cria `mods/psych-<nome>/` uma única vez, sem modificar os arquivos originais nem sobrescrever mods existentes. Para reimportar uma atualização, remova apenas a pasta gerada correspondente e reinicie. A primeira importação copia o áudio e pode demorar; as seguintes inicializações reutilizam o resultado. Uma importação sem músicas válidas deixa um arquivo `*-import-report.txt` na pasta `mods/`.
 
 # Build Android para jogar
 
-O workflow `Android APK` gera código release sem debugger Flixel, contadores, visualizador de áudio nem pré-carga de todas as bibliotecas. O Android usa limite de 60 FPS, inclusive em telas de 90/120 Hz. As bibliotecas de assets são carregadas conforme necessárias; isso troca uso antecipado de memória por possíveis pausas no primeiro acesso.
+O workflow `Android APK` gera código release sem debugger Flixel, contadores nem visualizador de áudio. O Android usa limite de 60 FPS, inclusive em telas de 90/120 Hz. As bibliotecas continuam registradas na inicialização para que o Polymod encontre todos os assets dos mods. O build usa a compressão ASTC configurada pelo projeto para texturas mobile.
 
-A área de jogo permanece em 1280×720 (16:9), com barras em telas de outra proporção. Não há redução dos gráficos originais. O ganho de memória/FPS depende da música, dos assets e do aparelho; ainda exige medição em dispositivo real.
+A área de jogo permanece em 1280×720 (16:9), com barras em telas de outra proporção. O ganho de memória/FPS depende da música, dos assets e do aparelho; ainda exige medição em dispositivo real.
 
 # Teste do importador
 
