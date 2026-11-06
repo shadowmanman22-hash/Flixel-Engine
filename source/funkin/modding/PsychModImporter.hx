@@ -86,7 +86,7 @@ class PsychModImporter
       var referenceCamera:String = null;
       var files = FileSystem.readDirectory(directory);
       // Prefer normal as the canonical metadata/camera timeline when available.
-      files.sort((a, b) -> a == '$folder.json' ? -1 : (b == '$folder.json' ? 1 : Reflect.compare(a, b)));
+      files.sort((a, b) -> a == b ? 0 : (a == '$folder.json' ? -1 : (b == '$folder.json' ? 1 : Reflect.compare(a, b))));
       for (filename in files)
       {
         if (!StringTools.endsWith(filename, '.json')) continue;
