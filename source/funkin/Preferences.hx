@@ -20,21 +20,16 @@ class Preferences
 {
   /**
    * FPS
-   * Always the refresh rate of the display on mobile, or 60 on web.
+   * Capped at 60 on mobile and web.
    * @default `60`
    */
   public static var framerate(get, set):Int;
 
   static function get_framerate():Int
   {
-    #if web
+    #if (web || mobile)
+    // Keep mobile CPU/GPU work bounded even on 90/120 Hz displays.
     return 60;
-    #elseif mobile
-    var refreshRate:Int = FlxG.stage.window.displayMode.refreshRate;
-
-    if (refreshRate < 60) refreshRate = 60;
-
-    return refreshRate;
     #else
     return Save?.instance?.options?.framerate ?? 60;
     #end
@@ -42,14 +37,8 @@ class Preferences
 
   static function set_framerate(value:Int):Int
   {
-    #if web
+    #if (web || mobile)
     return 60;
-    #elseif mobile
-    var refreshRate:Int = FlxG.stage.window.displayMode.refreshRate;
-
-    if (refreshRate < 60) refreshRate = 60;
-
-    return refreshRate;
     #else
     var save:Save = Save.instance;
     save.options.framerate = value;
@@ -575,6 +564,9 @@ class Preferences
 
   public static function setDebugDisplayMode(mode:DebugDisplayMode):Void
   {
+    #if NO_FEATURE_DEBUG_DISPLAY
+    return;
+    #else
     if (FlxG.game.contains(Main.debugDisplay)) FlxG.game.removeChild(Main.debugDisplay);
 
     if (mode == DebugDisplayMode.Off) return;
@@ -582,6 +574,7 @@ class Preferences
     Main.debugDisplay.isAdvanced = (mode == DebugDisplayMode.Advanced);
 
     FlxG.game.addChild(Main.debugDisplay);
+    #end
   }
 
   static function setDebugDisplayBGOpacity(value:Float):Void

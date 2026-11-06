@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   android:
-    name: Build Android debug APK
+    name: Build Android APK
     runs-on: ubuntu-24.04
     timeout-minutes: 120
     env:
@@ -61,6 +61,9 @@ jobs:
             sleep 15
           done
 
+      - name: Test Psych chart importer
+        run: bash scripts/test-psych-importer.sh
+
       - name: Install native build dependencies
         run: |
           sudo apt-get update
@@ -91,12 +94,19 @@ jobs:
 
       - name: Build APK
         timeout-minutes: 40
-        run: haxelib run lime build android -debug
+        # Release code with Android's local debug signing (no signing secrets required).
+        run: >-
+          haxelib run lime build android
+          -DNO_FEATURE_DEBUG_FUNCTIONS -DNO_FEATURE_DEBUG_DISPLAY
+          -DNO_FEATURE_DEBUG_MENU -DNO_FEATURE_RESULTS_DEBUG
+          -DNO_FEATURE_FUNKVIS -DNO_PRELOAD_ALL
+          -DNO_FEATURE_MOBILE_ADVERTISEMENTS -DNO_FEATURE_MOBILE_IAP
+          -DNO_FEATURE_MOBILE_IAR -DNO_FEATURE_MOBILE_AGESIGNALS
 
-      - name: Upload debug APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Flixel-Engine-android-debug
-          path: export/debug/android/bin/**/outputs/apk/debug/*.apk
+          name: Flixel-Engine-android
+          path: export/release/android/bin/**/outputs/apk/**/*.apk
           if-no-files-found: error
           retention-days: 14

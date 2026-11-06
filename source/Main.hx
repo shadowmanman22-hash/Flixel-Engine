@@ -139,6 +139,7 @@ class Main extends Sprite
     initHaxeUI();
     #end
 
+    #if FEATURE_DEBUG_DISPLAY
     // addChild gets called by the user settings code.
     debugDisplay = new FunkinDebugDisplay(10, 10, 0xFFFFFF);
 
@@ -148,6 +149,7 @@ class Main extends Sprite
     #if mobile
     // Add this signal so we can reposition and resize the memory and fps counter.
     FlxG.signals.preUpdate.add(repositionCounters.bind(true));
+    #end
     #end
 
     // George recommends binding the save before FlxGame is created.
@@ -176,8 +178,15 @@ class Main extends Sprite
 
     var framerate:Int = Preferences.unlockedFramerate ? 0 : Preferences.framerate;
 
-    var game:FlxGame = new FlxGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash,
-      (FlxG.stage.window.fullscreen || Preferences.autoFullscreen));
+    var game:FlxGame = new FlxGame(
+      gameWidth,
+      gameHeight,
+      initialState,
+      framerate,
+      framerate,
+      skipSplash,
+      (FlxG.stage.window.fullscreen || Preferences.autoFullscreen)
+    );
 
     // FlxG.game._customSoundTray wants just the class, it calls new from
     // create() in there, which gets called when it's added to the stage
@@ -196,7 +205,7 @@ class Main extends Sprite
     FlxG.scaleMode = new FullScreenScaleMode();
     #end
 
-    #if mobile
+    #if (mobile && FEATURE_DEBUG_DISPLAY)
     // Reposition and resize the memory and fps counter without lerping.
     repositionCounters(false);
     #end

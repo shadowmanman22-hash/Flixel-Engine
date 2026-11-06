@@ -98,6 +98,7 @@ class PolymodHandler
     #if sys
     // Create the mod root if it doesn't exist.
     createModRoot();
+    PsychModImporter.importAll("psych-mods", MOD_FOLDER);
     #end
     trace('Initializing Polymod (using all mods)...');
     loadModsByDir(getAllModDirs());
@@ -331,7 +332,7 @@ class PolymodHandler
     // `haxe.Http`
     // An alias for `sys.Http`, which is also a blacklisted package.
     Polymod.blacklistImport('haxe.Http');
-    
+
     // `haxe.Unserializer`
     // Unserializer.DEFAULT_RESOLVER.resolveClass() can access blacklisted packages
     Polymod.blacklistImport('haxe.Unserializer');
@@ -561,9 +562,7 @@ class PolymodHandler
    */
   public static function getAllModDirs():Array<String>
   {
-    var modDirs:Array<String> = [
-      for (i in getAllMods()) i.dirName
-    ];
+    var modDirs:Array<String> = [for (i in getAllMods()) i.dirName];
     return modDirs;
   }
 
